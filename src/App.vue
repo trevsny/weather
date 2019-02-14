@@ -1,14 +1,14 @@
 <template>
   <div id="app">
-    <div class="container">
+    <div class="container-fluid">
       <b-row>
-        <b-col class="mt-5">
-          <h1>Let's get some weather!</h1>
+        <b-col class="mt-4">
+          <h1 class="">Let's get some weather!</h1>
         </b-col>
       </b-row>
       <b-form @submit.prevent="searchCity()">
         <b-row class="mt-4">
-          <b-col class="col-6 mx-auto">
+          <b-col class="col-md-9 col-lg-6 mx-auto">
             <b-input-group>
               <b-form-input
               v-model="search"
@@ -23,15 +23,15 @@
         </b-row>      
         <b-row class="mt-4 mb-4">
           <b-col class="mx-auto">
-            <b-form-group label="Want fahrenheit because you're an American?" class="custom-control custom-checkbox ml-0 p-0">
-              <!-- <b-form-checkbox-group id="checkGroup"> -->
+            <b-form-group label="Need fahrenheit?"  label-for = "checkGroup" class="h6">
+              <b-form-checkbox-group id="checkGroup">
                   <input
                     v-model="selected"
                     id="customCheck1"
                     type= "checkbox"
                   >
-                <label for = "customCheck1">Yes</label>
-              <!-- </b-form-checkbox-group> -->
+                <label for = "customCheck1">Yes, I'm American</label>
+              </b-form-checkbox-group>
             </b-form-group>
           </b-col>
         </b-row>
@@ -63,6 +63,7 @@
               <b-row>
                 <b-col>
                   <b-table
+                  
                   stacked = "md"
                   :items = [row.item.data.main]
                   >
@@ -189,11 +190,17 @@ export default {
 </script>
 
 <style>
-* {
+html { 
+ 
   
 }
+
 #app {
-  background-image: url('./assets/sky.jpg');
+  background: url('./assets/sky.jpg') no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -201,24 +208,27 @@ export default {
   color: #2c3e50;
   min-height: -webkit-fill-available;
 }
+/* #customCheck1{
+  position: relative;
+}
+#customCheck1::before{
+  content: "Need fahrenheit?";
+  position: absolute;
+  right: 110%;
+  white-space: nowrap;
 
-h1, h2 {
+} */
+h1 {
   font-weight: normal;
+  font-family: 'Montserrat Alternates', sans-serif,'Avenir', Helvetica, Arial, sans-serif;
+  font-size: 3em;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+form {
+  margin-top: 10%;
 }
 
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
 
-a {
-  color: #42b983;
-}
 @media only screen and (orientation: portrait) {
   #app{
     min-height: -webkit-fill-available;
