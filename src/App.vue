@@ -1,14 +1,14 @@
 <template>
   <div id="app">
-    <div class="container">
+    <div class="container-fluid">
       <b-row>
-        <b-col class="mt-5">
-          <h1>Let's get some weather!</h1>
+        <b-col class="mt-4">
+          <h1 class="">Let's get some weather!</h1>
         </b-col>
       </b-row>
       <b-form @submit.prevent="searchCity()">
         <b-row class="mt-4">
-          <b-col class="col-6 mx-auto">
+          <b-col class="col-md-9 col-lg-5 mx-auto">
             <b-input-group>
               <b-form-input
               v-model="search"
@@ -23,32 +23,34 @@
         </b-row>      
         <b-row class="mt-4 mb-4">
           <b-col class="mx-auto">
-            <b-form-group label="Want fahrenheit because you're an American?" class="custom-control custom-checkbox ml-0 p-0">
-              <!-- <b-form-checkbox-group id="checkGroup"> -->
+            <b-form-group label="Need fahrenheit?"  label-for = "checkGroup" class="h6">
+              <b-form-checkbox-group id="checkGroup">
                   <input
                     v-model="selected"
                     id="customCheck1"
                     type= "checkbox"
                   >
-                <label for = "customCheck1">Yes</label>
-              <!-- </b-form-checkbox-group> -->
+                <label for = "customCheck1">Yes, I'm American</label>
+              </b-form-checkbox-group>
             </b-form-group>
           </b-col>
         </b-row>
       </b-form>  
       <b-row v-if="error">
-        <b-col class="col-6 mx-auto">
+        <b-col class="col-md-6 mx-auto">
           <b-alert variant="danger" :show= 3 dismissible @dismissed = "error = false"><strong>Uh oh! Check your spelling or spacing</strong></b-alert>
         </b-col>
       </b-row>
       <b-row v-if="empty">
-        <b-col class="col-6 mx-auto">
+        <b-col class="col-md-6 mx-auto">
           <b-alert variant="warning" :show= 3 dismissible @dismissed = "empty = false"><strong>Come on!</strong> You gotta put something...</b-alert>
         </b-col>
       </b-row>
       <b-row v-if="results" class="mt-3">
         <b-col>
+          <!-- Main search results table -->
           <b-table
+          outlined
           stacked = "md"
           hover
           :items = items
@@ -57,12 +59,13 @@
           <template slot="more details" slot-scope="row">
             <font-awesome-icon icon="chevron-circle-down" @click.stop="row.toggleDetails"></font-awesome-icon>
           </template>
+          <!-- Shows detailed temperature and pressure data -->
           <template slot="row-details" slot-scope="row">
-            <!-- Shows detailed temperature and pressure data -->
             <b-card>
               <b-row>
                 <b-col>
                   <b-table
+                  hover
                   stacked = "md"
                   :items = [row.item.data.main]
                   >
@@ -82,6 +85,7 @@
       <b-row class="mt-5" v-if="showRecent">
         <b-col>
             <b-table
+              hover
               stacked = "md"
               show-empty
               :items = recentSearches
@@ -89,8 +93,8 @@
               <template slot="more details" slot-scope="row">
                 <font-awesome-icon icon="chevron-circle-down" @click.stop="row.toggleDetails"></font-awesome-icon>
               </template>
+              <!-- Shows detailed temperature and pressure data -->
               <template slot="row-details" slot-scope="row">
-                <!-- Shows detailed temperature and pressure data -->
                 <b-card>
                   <b-row>
                     <b-col>
@@ -157,23 +161,17 @@ export default {
         axios
         .get('http://api.openweathermap.org/data/2.5/weather?q=' + this.search + '&units=' + unitsOfMeasure + '&APPID=416d51bbc53e459a19800cf970e29249')
         .then(response => {
-          //city
+          //parse through response for data I want
           let city = response.data.name;
-          //country
           let country = response.data.sys.country;
-          //current temp
           let currentTemp = Math.round(response.data.main.temp);
-          //sky conditions
           let skyCond = response.data.weather[0].description
-          // console.log(response);
           this.results = true;
           this.items = [{'city': city, 'country': country, 'current temp': currentTemp, 'sky conditions': skyCond, 'data':response.data}];
           this.recentSearches.push({'city': city, 'country': country, 'current temp': currentTemp, 'sky conditions': skyCond, 'data':response.data});
-          console.log(this.recentSearches)
         })
         .catch(error => {
           this.error = true;
-          console.log(error);
         });
       } else {
         this.empty = true;
@@ -184,48 +182,39 @@ export default {
     }
   }
 }
-// npm WARN babel-loader@6.4.1 requires a peer of webpack@1 || 2 || ^2.1.0-beta || ^2.2.0-rc but none is installed. You must install peer dependencies yourself.
+
 
 </script>
 
 <style>
-* {
-  
-}
 #app {
-  background-image: url('./assets/sky.jpg');
+  background: url('./assets/sky.jpg') no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  overflow: hidden;
   min-height: -webkit-fill-available;
 }
-
-h1, h2 {
+h1 {
   font-weight: normal;
+  font-family: 'Montserrat Alternates', sans-serif,'Avenir', Helvetica, Arial, sans-serif;
+  font-size: 6vw;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+form {
+  margin-top: 7%;
 }
-
-li {
-  display: inline-block;
-  margin: 0 10px;
+th{
+  font-weight: 900;
 }
-
-a {
-  color: #42b983;
+td {
+  font-weight: 500;
 }
-@media only screen and (orientation: portrait) {
-  #app{
-    min-height: -webkit-fill-available;
-  }
-}
-/* @media only screen and (orientation: landscape) {
-  min-height: -webkit-fill-available;
-} */
 
 </style>
