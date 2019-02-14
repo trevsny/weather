@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <div class="container">
-      <b-row class="mt-5">
-        <b-col>
+      <b-row>
+        <b-col class="mt-5">
           <h1>Let's get some weather!</h1>
         </b-col>
       </b-row>
@@ -23,16 +23,16 @@
         </b-row>      
         <b-row class="mt-4 mb-4">
           <b-col class="mx-auto">
-            <!-- <b-form-group label="Fahrenheit?" class="custom-control custom-checkbox ml-0 p-0"> -->
-              <b-form-checkbox-group>
+            <b-form-group label="Want fahrenheit because you're an American?" class="custom-control custom-checkbox ml-0 p-0">
+              <!-- <b-form-checkbox-group id="checkGroup"> -->
                   <input
                     v-model="selected"
                     id="customCheck1"
                     type= "checkbox"
                   >
-                <label for = "customCheck1">I'm an American</label>
-              </b-form-checkbox-group>
-            <!-- </b-form-group> -->
+                <label for = "customCheck1">Yes</label>
+              <!-- </b-form-checkbox-group> -->
+            </b-form-group>
           </b-col>
         </b-row>
       </b-form>  
@@ -49,6 +49,7 @@
       <b-row v-if="results" class="mt-3">
         <b-col>
           <b-table
+          stacked = "md"
           hover
           :items = items
           :fields = fields
@@ -62,6 +63,7 @@
               <b-row>
                 <b-col>
                   <b-table
+                  stacked = "md"
                   :items = [row.item.data.main]
                   >
                   </b-table>
@@ -74,14 +76,36 @@
       </b-row>
       <b-row class="mx-auto">
         <b-col>
-          <!-- <b-button @click="showRecentResults()">Show Recent Searches</b-button> -->
+          <b-button size="sm" @click="showRecentResults()">{{ showRecent ? 'Hide' : 'Show' }}  Recent Searches</b-button>
         </b-col>
       </b-row>
-      <!-- <b-row class="mt-5" v-if="showRecent">
+      <b-row class="mt-5" v-if="showRecent">
         <b-col>
-          HI
+            <b-table
+              stacked = "md"
+              show-empty
+              :items = recentSearches
+              :fields = fields >
+              <template slot="more details" slot-scope="row">
+                <font-awesome-icon icon="chevron-circle-down" @click.stop="row.toggleDetails"></font-awesome-icon>
+              </template>
+              <template slot="row-details" slot-scope="row">
+                <!-- Shows detailed temperature and pressure data -->
+                <b-card>
+                  <b-row>
+                    <b-col>
+                      <b-table
+                      stacked = "md"
+                      :items = [row.item.data.main]
+                      >
+                      </b-table>
+                    </b-col>
+                  </b-row>
+                </b-card>
+              </template>
+            </b-table>
         </b-col>
-      </b-row> -->
+      </b-row>
     </div>
   </div>
 </template>
@@ -97,10 +121,14 @@ export default {
       fields:[
         'city',
         'country',
-        'current temp',
+        { 
+          'key':'current temp',
+          'sortable': true
+        },
         'sky conditions',
         'more details'
       ],
+      
       items:[],
       search: "",
       selected:"",
@@ -137,23 +165,22 @@ export default {
           let currentTemp = Math.round(response.data.main.temp);
           //sky conditions
           let skyCond = response.data.weather[0].description
-          console.log(response);
+          // console.log(response);
           this.results = true;
           this.items = [{'city': city, 'country': country, 'current temp': currentTemp, 'sky conditions': skyCond, 'data':response.data}];
-          this.recentSearches.push(this.items);
+          this.recentSearches.push({'city': city, 'country': country, 'current temp': currentTemp, 'sky conditions': skyCond, 'data':response.data});
+          console.log(this.recentSearches)
         })
         .catch(error => {
           this.error = true;
           console.log(error);
-        })
-               
-
+        });
       } else {
         this.empty = true;
       }
     },
     showRecentResults: function(){
-      this.showRecent = true;
+      this.showRecent = !this.showRecent;
     }
   }
 }
@@ -162,8 +189,11 @@ export default {
 </script>
 
 <style>
+* {
+  
+}
 #app {
-  /* background-image: url('./assets/sky.jpg'); */
+  background-image: url('./assets/sky.jpg');
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -189,5 +219,13 @@ li {
 a {
   color: #42b983;
 }
+@media only screen and (orientation: portrait) {
+  #app{
+    min-height: -webkit-fill-available;
+  }
+}
+/* @media only screen and (orientation: landscape) {
+  min-height: -webkit-fill-available;
+} */
 
 </style>
