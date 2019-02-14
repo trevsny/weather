@@ -1,6 +1,13 @@
-# weather
+# Weather
 
 > Weather API Code Challenge
+
+## Clone
+Navigate to a folder you want to git clone this project into.
+
+Then ```
+cd weather```
+into the newly created folder 'weather' and then follow the Build Setup instructions
 
 ## Build Setup
 
